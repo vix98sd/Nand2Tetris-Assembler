@@ -1,0 +1,9 @@
+Uputstvo za pokretanje:
+-Putanja do .exe fajla:
+ AssemblerToBinary > AssemblerToBinary > bin > Debug > AssemblerToBinary.exe
+
+Uputstvo za koriscenje:
+-Kliknuti na LOAD FILE i izabrati zeljeni .asm fajl
+-Kliknuti na 'Generate Machine Code' za generisanje koda
+
+Zelim Vam prijatan ostatak dana!

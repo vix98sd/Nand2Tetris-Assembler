@@ -31,6 +31,9 @@ namespace BusinessLayer
                 }
                 if (code[i].Equals(""))
                     code.RemoveAt(i--);
+
+                if (string.IsNullOrWhiteSpace(code[i]))
+                    code.RemoveAt(i--);
             }
 
             return code;

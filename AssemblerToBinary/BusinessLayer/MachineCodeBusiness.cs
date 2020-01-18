@@ -9,7 +9,7 @@ namespace BusinessLayer
 {
     public class MachineCodeBusiness
     {
-        // Metoda vraca masinski kod unetog assembler koda
+        // A method that returns instruction in machine language 
         public List<string> GetMachineCode(List<string> code)
         {
             List<string> machineCode = new List<string>();
@@ -33,11 +33,11 @@ namespace BusinessLayer
             return machineCode;
         }
 
-        // Metoda proverava da li je instrukcija tipa A
+        // A methot that check if instruction is an A type
         private bool IsTypeA(string line) => line[0] == '@' ? true : false;
 
-        // Metoda koja vrsi prevodjenje instrukcije
-        // tipa A u njen binarni reprezent
+        // A method that translates type A
+        // instruction in machine language
         private string HandleTypeA(string line, List<Symbol> symbolTable)
         {
             string machineCode = "";
@@ -60,34 +60,62 @@ namespace BusinessLayer
             return zeros + machineCode;
         }
 
-        // Metoda koja vrsi prevodjenje instrukcije
-        // tipa C u njen binarni reprezent
+        // A method that translates type C
+        // instruction in machine language
         private string HandleTypeC(string line, List<Instruction> commands, List<Instruction> destinations, List<Instruction> jumps)
         {
             string machineCode = "111";
             
-            if (line.Contains("="))
+            if (line.Contains("=") && line.Contains(";"))
             {
-            string[] parts = line.Split('=');
+                // C instruction with DEST=COMP;JMP format
+
+                string dest = line.Split('=')[0];
+                string comp = line.Split('=')[1].Split(';')[0];
+                string jmp = line.Split('=')[1].Split(';')[1];
+
+                machineCode += ABit(comp)
+                            + CompBits(comp, commands)
+                            + DestBits(dest, destinations)
+                            + JumpBits(jmp, jumps);
+            }
+            else if (line.Contains("="))
+            {
+                // C instruction with DEST=COMP format
+
+                string[] parts = line.Split('=');
+
                 machineCode += ABit(parts[1]) 
                             + CompBits(parts[1], commands)
                             + DestBits(parts[0], destinations)
                             + JumpBits(parts[1], jumps);
             }
-            else
+            else if (line.Contains(";"))
             {
+                // C instruction with COMP;JMP format
+
                 string[] parts = line.Split(';');
+
                 machineCode += ABit(parts[0])
                             + CompBits(parts[0], commands)
                             + DestBits(parts[1], destinations)
                             + JumpBits(parts[1], jumps);
             }
+            else
+            {
+                // C instruction with COMP format
+
+                machineCode += ABit(line)
+                            + CompBits(line, commands)
+                            + DestBits(line, destinations)
+                            + JumpBits(line, jumps);
+            }
 
             return machineCode;
         }
 
-        // Instrukcija koja postavnja vrednost 
-        // A bita u instrukciji tipa C
+        // A method that sets A bit
+        // in C type instruction
         private string ABit(string line)
         {
             if (line.Contains("M"))
@@ -96,8 +124,8 @@ namespace BusinessLayer
             return "0";
         }
 
-        // Instrukcija koja postavnja vrednost 
-        // COMP bitova u instrukciji tipa C
+        // A method that sets COMP bits
+        // in C type instruction
         private string CompBits(string line, List<Instruction> commands)
         {
             foreach (Instruction command in commands)
@@ -107,8 +135,8 @@ namespace BusinessLayer
             return "CompBitsError";
         }
 
-        // Instrukcija koja postavnja vrednost 
-        // DEST bitova u instrukciji tipa C
+        // A method that sets DEST bits
+        // in C type instruction
         private string DestBits(string line, List<Instruction> destinations)
         {
             foreach (Instruction destination in destinations)
@@ -117,8 +145,8 @@ namespace BusinessLayer
             return "000";
         }
 
-        // Instrukcija koja postavnja vrednost 
-        // JUMP bitova u instrukciji tipa C
+        // A method that sets JUMP bits
+        // in C type instruction
         private string JumpBits(string line, List<Instruction> jumps)
         {
             foreach (Instruction jump in jumps)
